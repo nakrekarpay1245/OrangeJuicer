@@ -15,29 +15,22 @@ public class Manager : MonoBehaviour
     [Header("Progress")]
     [SerializeField]
     private Bar progressBar;
-    public int totalEnemyCount;
-    public int currentEnemyCount;
-
-    [Header("Economy")]
-    [SerializeField]
-    private TextMeshProUGUI silverCountText;
+    public int totalCubeCount = 0;
+    public int collectedCubeCount = 0;
 
     [Header("Start-End Game")]
     [SerializeField]
     private GameObject tutorial;
-    [SerializeField]
-    private GameObject levelEndArea;
     [SerializeField]
     private GameObject levelEndUI;
     [SerializeField]
     private GameObject levelUI;
 
     private bool isFirstTouch;
-    [HideInInspector]
-    public bool firstMove;
+
+    private bool firstMove;
 
     public bool isLevelCompleted;
-    public bool isAllEnemiesDied;
 
     public static Manager manager;
     private void Awake()
@@ -53,27 +46,29 @@ public class Manager : MonoBehaviour
     {
         if (!isFirstTouch && firstMove)
         {
-            isFirstTouch = true;
-            tutorial.SetActive(false);
+            if (!isLevelCompleted)
+            {
+                isFirstTouch = true;
+                tutorial.SetActive(false);
+            }
+        }
+
+        if (collectedCubeCount >= totalCubeCount)
+        {
+            CompleteLevel();
         }
     }
 
     public void CompleteLevel()
     {
         // Debug.Log("LEVEL COMPLETED");
-        isLevelCompleted = true;
-        levelEndUI.SetActive(true);
-    }
-
-    public void AllEnemiesDied()
-    {
-        levelEndArea.SetActive(true);
-        isAllEnemiesDied = true;
-    }
-
-    public void DisplaySilver(int value)
-    {
-        silverCountText.text = value.ToString();
+        StopAllCoroutines();
+        if (!isLevelCompleted)
+        {
+            isLevelCompleted = true;
+            levelEndUI.SetActive(true);
+            levelUI.SetActive(false);
+        }
     }
 
     public void StartGame()
@@ -83,26 +78,30 @@ public class Manager : MonoBehaviour
 
     public IEnumerator StartGameRoutine()
     {
-
         yield return new WaitForSeconds(1);
         firstMove = true;
         levelUI.SetActive(true);
     }
 
-    public void IncreaseEnemyCount()
+    public void IncreaseCollectedCubeCount()
     {
-        totalEnemyCount++;
-        currentEnemyCount = totalEnemyCount;
-        progressBar.SetMaxValue(totalEnemyCount);
-        progressBar.SetCurrentValue(0);
+        if (!isLevelCompleted)
+        {
+            // Debug.Log("Increase CollectedCube Count");
+            collectedCubeCount++;
+            progressBar.SetCurrentValue(collectedCubeCount);
+        }
     }
 
-    public void DecreaseEnemyCount()
+    public void IncreaseTotalCubeCount()
     {
-        currentEnemyCount--;
-        progressBar.SetCurrentValue(totalEnemyCount - currentEnemyCount);
+        if (!isLevelCompleted)
+        {
+            // Debug.Log("Increase TotalCube Count");
+            totalCubeCount++;
+            progressBar.SetMaxValue(totalCubeCount);
+        }
     }
-
 
     public void RestartLevel()
     {

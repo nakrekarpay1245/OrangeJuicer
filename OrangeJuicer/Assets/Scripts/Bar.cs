@@ -13,39 +13,24 @@ public class Bar : MonoBehaviour
     [SerializeField]
     private Slider slider;
 
-    public bool isLocalCanvas = true;
-
-    private Transform mainCamera;
-    private void Awake()
-    {
-        // slider = GetComponent<Slider>();
-        mainCamera = Camera.main.transform;
-    }
-
-    private void FixedUpdate()
-    {
-        if (isLocalCanvas)
-            transform.LookAt(mainCamera);
-    }
-
     public void SetMaxValue(float value)
     {
+        // Debug.Log("Set Max Value : " + value);
+
         maxValue = value;
 
         if (slider)
             slider.maxValue = maxValue;
-
-        SetCurrentValue(maxValue);
     }
 
     public void SetCurrentValue(float value)
     {
+        // Debug.Log("Set Current Value : " + value);
+
         currentValue = value;
 
         if (slider)
             slider.value = currentValue;
-
-        // Debug.Log(gameObject.name + " bar value: " + currentValue);
     }
 }
 
